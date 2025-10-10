@@ -1,15 +1,23 @@
 import express from 'express'
+import dotenv from 'dotenv'
+import mongoose from 'mongoose'
+import userModel from './userSchema.js'
+dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
-
-app.get(' pi/v6/health', (req, res) => {
+app.get('/api/v6/health', async (req, res) => {
   res.json({ status: 'OK', timestamp: new Date(), message: 'api v7' })
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello from kubernates v7')
+app.get('/', async (req, res) => {
+  const db = await mongoose.connect(process.env.MONGO_URI)
+  console.log('Database connected', db.connection.name)
+  const users = await userModel.find()
+  console.log('Users:', users)
+  res.json({ message: ' get all users v13', users })
 })
+
 app.get('/update', (req, res) => {
   res.send('Update Page v4')
 })

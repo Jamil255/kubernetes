@@ -14,12 +14,30 @@ spec:
       labels:
         app: node-app
     spec:
+      dnsPolicy: 'None'
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+          - 8.8.4.4
+        searches:
+          - default.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
+        options:
+          - name: ndots
+            value: '5'
       containers:
         - name: node-app
-          image: jamil255/node-app:11
+          image: jamil255/node-app:15
           ports:
             - containerPort: 3000
-              
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_URI
+
 ---
 apiVersion: v1
 kind: Service
